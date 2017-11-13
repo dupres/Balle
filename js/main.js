@@ -5,7 +5,7 @@ var v_right = 10;
 var p_top = 10;
 var p_left = 10;
 var rebond_ratio = 2/3;
-var apesenteur = 2;
+var apesenteur = 1.5;
 var interval;
 var mouse_begin_x;
 var mouse_begin_y;
@@ -29,7 +29,8 @@ $(document).ready(function(){
 			"border-radius" : "50%",
 			"position" : "absolute",
 			"top" : p_top+'px',
-			"left" : p_left+'px'
+			"left" : p_left+'px',
+			"transition" : "all 0.001s" // ça fait moins mal aux yeux
 		});
 	// On ajoute la balle au body (ne pas oublié de set le body et le HTML à width=100%)
 	$("body").append(balle);
@@ -80,9 +81,17 @@ function move(){
 			"top" : p_top+'px',
 			"left" : p_left+'px'
 		});
-		//On change la vitesse pour que la balle soit attiré vers le bas
-		v_down = v_down + apesenteur;
 
+		//On change la vitesse pour que la balle soit attiré vers le bas
+		// Si la balle est trop basse et que son rebond est faible, on stoppe les rebonds
+		if(v_down <= 1 && v_down >= -1 && p_top >= ($(window).height() - 59) ){
+			v_down = 0;
+			p_top = $(window).height() - 50;
+			// On fraine la balle quand elle est au sol
+			v_right = v_right * 42/44; // Parce que c'est joli
+		}else{
+			v_down = v_down + apesenteur;
+		}
 
 		// Ci-dessous les rebond_ratio servent à ralentir la balle au fur et à mesure de ses rebonds
 		//Si on est tout en bas on fait rebondir la balle

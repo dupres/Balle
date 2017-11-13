@@ -34,10 +34,13 @@ $(document).ready(function(){
 	// On ajoute la balle au body (ne pas oublié de set le body et le HTML à width=100%)
 	$("body").append(balle);
 
-	//Si on commence à cliquer on prend les positions de la souris et on attend la fin du click
+	//Si on commence à cliquer on prend les positions de la souris et on attend la fin du click et on bloque la balle
 	balle.mousedown(function(event){
 		mouse_begin_x = event.pageX;
 		mouse_begin_y = event.pageY;
+		balle.css({
+			"background-color" : "red"
+		});
 		change = true;
 	});
 
@@ -49,10 +52,10 @@ $(document).ready(function(){
 			mouse_end_y = event.pageY;
 			v_down =  mouse_end_y - mouse_begin_y;
 			v_right = mouse_end_x - mouse_begin_x;
-			console.log('x:'+mouse_begin_x);
-			console.log('y:'+mouse_begin_y);
-			console.log('x:'+mouse_end_x);
-			console.log('y:'+mouse_end_y);
+
+			balle.css({
+				"background-color" : "blue"
+			});
 			change = false;
 		}
 	});
@@ -64,33 +67,39 @@ $(document).ready(function(){
 });
 
 function move(){
-	//La position de la balle est augmentée par celle de la vitesse
-	p_top = p_top + v_down;
-	p_left = p_left + v_right;
-	//On change la position au niveau du css
-	balle.css({
-		"top" : p_top+'px',
-		"left" : p_left+'px'
-	});
-	//On change la vitesse pour que la balle soit attiré vers le bas
-	v_down = v_down + apesenteur;
+	//Si on ne change pas la vitesse de la balle
+	if(!change){
+		//On redéfinit la taille de la fenêtre 
+		max_right = $(window).width();
+		max_bot = $(window).height();
+		//La position de la balle est augmentée par celle de la vitesse
+		p_top = p_top + v_down;
+		p_left = p_left + v_right;
+		//On change la position au niveau du css
+		balle.css({
+			"top" : p_top+'px',
+			"left" : p_left+'px'
+		});
+		//On change la vitesse pour que la balle soit attiré vers le bas
+		v_down = v_down + apesenteur;
 
 
-	// Ci-dessous les rebond_ratio servent à ralentir la balle au fur et à mesure de ses rebonds
-	//Si on est tout en bas on fait rebondir la balle
-	if(p_top + v_down + 50 >= max_bot){
-		v_down = - v_down * rebond_ratio;
-	}
-	//Si on est tout à droite on fait rebondir la balle
-	if(p_left + v_right + 50 >= max_right){
-		v_right = - v_right * rebond_ratio;
-	}
-	//Si on est tout en haut on fait rebondir encore
-	if(p_top + v_down <= 0){
-		v_down = - v_down * rebond_ratio;
-	}
-	//Si on est tout à gauche on rebondit aussi
-	if(p_left + v_right <= 0){
-		v_right = - v_right * rebond_ratio;
+		// Ci-dessous les rebond_ratio servent à ralentir la balle au fur et à mesure de ses rebonds
+		//Si on est tout en bas on fait rebondir la balle
+		if(p_top + v_down + 50 >= max_bot){
+			v_down = - v_down * rebond_ratio;
+		}
+		//Si on est tout à droite on fait rebondir la balle
+		if(p_left + v_right + 50 >= max_right){
+			v_right = - v_right * rebond_ratio;
+		}
+		//Si on est tout en haut on fait rebondir encore
+		if(p_top + v_down <= 0){
+			v_down = - v_down * rebond_ratio;
+		}
+		//Si on est tout à gauche on rebondit aussi
+		if(p_left + v_right <= 0){
+			v_right = - v_right * rebond_ratio;
+		}
 	}
 }

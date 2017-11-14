@@ -16,12 +16,36 @@
         <option value="4">Basket</option>
         <option value="5">Metroid</option>
         <option value="6">IE</option>
+        <option value="7">Pokemon</option>
+        <option value="8">Pokemon 2</option>
+        <option value="9">TMNT</option>
+        <option value="10">DBZ</option>
+        <option value="11">Spaaaace</option>
+        <option value="12">Spaghetti</option>
+        <option value="13">Greed</option>
+        <option value="14">IUT</option>
+        <option value="15">Cycle</option>
+        <option value="16">Billard </option>
+        <option value="17">Box</option>
+        <option value="18">Tail star</option>
+        <option value="19">Pen</option>
+        <option value="20">Balloon</option>
     </select>
+
+    <canvas id="canvas"/>
 </body>
 
 <style>
     body{
         background-size: cover;
+    }
+    #canvas{
+        position:fixed;
+        top:0;
+        left:0;
+        width:100%;
+        height:100%;
+        z-index:-1;
     }
 </style>
 
@@ -44,57 +68,70 @@ var change = false;
 var max_right = 500;
 var max_bot = 500;
 
+var context;
+var canvas;
+
+var canDraw = false;
+var mode = 1;
 $(document).ready(function(){
         //Redéfinition de la grandeur de la page
         max_right = $(window).width();
         max_bot = $(window).height();
+        //On récupère le canvas
+        canvas = $("#canvas");
+        context = canvas.get(0).getContext("2d");
         //On définni le css de notre balle
         balle.attr("id","balle")
-                .css({
-                        "width" : "50px",
-                        "height" : "50px",
-                        "background-color" : "blue",
-                        "background-size" : "cover",
-                        "border-radius" : "50%",
-                        "position" : "absolute",
-                        "top" : p_top+'px',
-                        "left" : p_left+'px',
-                        "transition" : "all 0.001s" // ça fait moins mal aux yeux
-                });
+            .css({
+                "width" : "50px",
+                "height" : "50px",
+                "background-color" : "blue",
+                "background-size" : "cover",
+                "border-radius" : "50%",
+                "position" : "absolute",
+                "top" : p_top+'px',
+                "left" : p_left+'px',
+                "transition" : "all 0.001s" // ça fait moins mal aux yeux
+            });
 
         // On ajoute la balle au body (ne pas oublié de set le body et le HTML à width=100%)
         $("body").append(balle);
 
         //Si on commence à cliquer on prend les positions de la souris et on attend la fin du click et on bloque la balle
         balle.mousedown(function(event){
-                mouse_begin_x = event.pageX;
-                mouse_begin_y = event.pageY;
-                balle.css({
-                        "background-color" : balle.css("background-color")
-                });
-                change = true;
+            event.preventDefault();
+            mouse_begin_x = event.pageX;
+            mouse_begin_y = event.pageY;
+            balle.css({
+                    "background-color" : balle.css("background-color")
+            });
+            change = true;
         });
 
         //Si on fini de clicker
         $("body").mouseup(function(event){
-                //Si on avait cliquer sur la balle on change les vitesses avec celle de la souris
-                if(change){
-                        mouse_end_x = event.pageX;
-                        mouse_end_y = event.pageY;
-                        v_down =  mouse_end_y - mouse_begin_y;
-                        v_right = mouse_end_x - mouse_begin_x;
+            event.preventDefault();
+            //Si on avait cliquer sur la balle on change les vitesses avec celle de la souris
+            if(change){
+                mouse_end_x = event.pageX;
+                mouse_end_y = event.pageY;
+                v_down =  mouse_end_y - mouse_begin_y;
+                v_right = mouse_end_x - mouse_begin_x;
 
-                        balle.css({
-                                "background-color" : balle.css("background-color")
-                        });
-                        change = false;
-                }
+                balle.css({
+                        "background-color" : balle.css("background-color")
+                });
+                change = false;
+            }
         });
 
         interval = setInterval(function(){
                 //On bouge la balle toutes les 30ms
                 move();
         },30);
+
+        context.canvas.width  = max_right;
+        context.canvas.height = max_bot;
 });
 
 function move(){
@@ -103,6 +140,26 @@ function move(){
             //On redéfinit la taille de la fenêtre 
                 max_right = $(window).width();
                 max_bot = $(window).height();
+
+                //------- Canvas draw -------------
+                if (canDraw){
+                    if (mode == 18){
+                        context.canvas.width  = max_right;
+                        context.canvas.height = max_bot;
+                        context.moveTo(p_left+25,p_top+25);
+                        context.lineTo(p_left+v_right*(-4)+25,p_top+v_down*(-4)+25);
+                        context.stroke();
+                    }
+                    if (mode == 19){
+                        
+
+                        context.lineTo(p_left+v_right+25,p_top+v_down+25);
+                        context.stroke();
+                    }
+                    
+                }
+                //---------------------------------
+
                 //La position de la balle est augmentée par celle de la vitesse
                 p_top = p_top + v_down;
                 p_left = p_left + v_right;
@@ -146,41 +203,175 @@ function move(){
                         "top" : p_top+'px',
                         "left" : p_left+'px'
                 });
+
+
+
         }
 }
 
 $('#select').on('change', function() {
+    mode = this.value;
     switch (this.value){
-        case '1':
-            $("body").css("background-image","src('')");
-            $("#balle").css("background-image","src('')")
+        case '1': //Normal
+            $("body").css("background-image","none");
+            $("#balle").css("background-image","none")
                 .css("background-color","black");
+                rebond_ratio = 2/3;
+                apesenteur = 7/4;
+                canDraw = false;
             break;
-        case '2':
+        case '2': //Bambi
             $("body").css("background-image","url('bg_2.jpeg')");
             $("#balle").css("background-image","url('balle_2.jpg')")
                 .css("background-color","rgba(0,0,0,0)");
+                rebond_ratio = 0.75;
+                apesenteur = 7/4;
+                canDraw = false;
             break;
-        case '3':
+        case '3': //Sonic
             $("body").css("background-image","url('bg_3.png')");
             $("#balle").css("background-image","url('balle_3.gif')")
                 .css("background-color","rgba(0,0,0,0)");
+                rebond_ratio = 2/3;
+                apesenteur = 7/4;
+                canDraw = false;
             break;
-        case '4':
+        case '4': //Basket
             $("body").css("background-image","url('bg_4.jpg')");
             $("#balle").css("background-image","url('balle_4.gif')")
                 .css("background-color","rgba(0,0,0,0)");
+                rebond_ratio = 0.955;
+                apesenteur = 15;
+                canDraw = false;
             break;
-        case '5':
-            $("body").css("background-image","url('bg_2.jpeg')");
-            $("#balle").css("background-image","url('balle_2.jpg')");
+        case '5': //Metroid
+            $("body").css("background-image","url('bg_5.png')");
+            $("#balle").css("background-image","url('balle_5.gif-c200')");
+                rebond_ratio = 2/3;
+                apesenteur = 2.5;
+                canDraw = false;
             break;
-        case '6':
-            $("body").css("background-image","url('bg_2.jpeg')");
-            $("#balle").css("background-image","url('balle_2.jpg')");
+        case '6': //IE
+            $("body").css("background-image","url('bg_6.jpg')");
+            $("#balle").css("background-image","url('balle_6.png')");
+                rebond_ratio = 2/3;
+                apesenteur = -0.75;
+                canDraw = false;
+            break;
+        case '7': //Pokemon
+            $("body").css("background-image","url('bg_7.jpg')");
+            $("#balle").css("background-image","url('balle_7.png')");
+                rebond_ratio = 2/3;
+                apesenteur = 7/4;
+                canDraw = false;
+            break;
+        case '8': //Pokemon 2
+            $("body").css("background-image","url('bg_8.jpg')");
+            $("#balle").css("background-image","url('balle_8.png')")
+                .css("background-color","rgba(0,0,0,0)");
+                rebond_ratio = 2/3;
+                apesenteur = 7/4;
+                canDraw = false;
+            break;
+        case '9': //TMNT
+            $("body").css("background-image","url('bg_9.jpg')");
+            $("#balle").css("background-image","url('balle_9.jpg')")
+                .css("background-color","rgba(0,0,0,0)");
+                rebond_ratio = 2/3;
+                apesenteur = 7/4;
+                canDraw = false;
+            break;
+        case '10': //DBZ
+            $("body").css("background-image","url('bg_10.jpg')");
+            $("#balle").css("background-image","url('balle_10.png')")
+                .css("background-color","rgba(0,0,0,0)");
+                rebond_ratio = 2/3;
+                apesenteur = 7/4;
+                canDraw = false;
+            break;
+        case '11': //Spaaaace
+            $("body").css("background-image","url('bg_11.jpg')");
+            $("#balle").css("background-image","url('balle_11.jpg')")
+                .css("background-color","rgba(0,0,0,0)");
+                rebond_ratio = 1/3;
+                apesenteur = 0;
+                canDraw = false;
+            break;
+        case '12': //Spaghetti
+            $("body").css("background-image","url('bg_12.jpg')");
+            $("#balle").css("background-image","url('balle_12.png')")
+                .css("background-color","rgba(0,0,0,0)");
+                rebond_ratio = 2/3;
+                apesenteur = 7/4;
+                canDraw = false;
+            break;
+        case '13': //Greed
+            $("body").css("background-image","url('bg_13.jpg')");
+            $("#balle").css("background-image","url('balle_13.png')")
+                .css("background-color","rgba(0,0,0,0)");
+                rebond_ratio = 2/3;
+                apesenteur = 7/4;
+                canDraw = false;
+            break;
+        case '14': //IUT
+            $("body").css("background-image","url('bg_14.jpg')");
+            $("#balle").css("background-image","url('balle_14.png')")
+                .css("background-color","rgba(0,0,0,0)");
+                rebond_ratio = 2/3;
+                apesenteur = 7/4;
+                canDraw = false;
+            break;
+        case '15': //Wheel
+            $("body").css("background-image","url('bg_15.jpg')");
+            $("#balle").css("background-image","url('balle_15.gif')")
+                .css("background-color","rgba(0,0,0,0)");
+                rebond_ratio = 0;
+                apesenteur = 0;
+                canDraw = false;
+            break;
+        case '16': //Billard
+            $("body").css("background-image","url('bg_16.png')");
+            $("#balle").css("background-image","url('balle_16.png')")
+                .css("background-color","rgba(0,0,0,0)");
+                rebond_ratio = 1/3;
+                apesenteur = 0;
+                canDraw = false;
+            break;
+        case '17': //Bug
+            $("body").css("background-image","url('bg_17.jpg')");
+            $("#balle").css("background-image","url('balle_17.png')")
+                .css("background-color","rgba(0,0,0,0)");
+                rebond_ratio = 0;
+                apesenteur = 0;
+                canDraw = false;
+            break;
+        case '18': //Construct
+            $("body").css("background-image","none");
+            $("#balle").css("background-image","url('balle_18.png')")
+                .css("background-color","rgba(0,0,0,0)");
+                rebond_ratio = 1/3;
+                apesenteur = 0;
+                canDraw = true;
+            break;
+        case '19': //Pen
+            $("body").css("background-image","none");
+            $("#balle").css("background-image","none")
+                .css("background-color","rgba(0,0,0,1)");
+                rebond_ratio = 2/3;
+                apesenteur = 7/4;
+                canDraw = true;
+            break;
+        case '20': //Balloon
+            $("body").css("background-image","url('bg_20.jpg')");
+            $("#balle").css("background-image","url('balle_20.png')")
+                .css("background-color","rgba(0,0,0,0)");
+                rebond_ratio = 2/3;
+                apesenteur = -0.75 ;
+                canDraw = true;
             break;
     }
     
+
 })
 
 </script>

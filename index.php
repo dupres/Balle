@@ -30,7 +30,10 @@
         <option value="18">Tail star</option>
         <option value="19">Pen</option>
         <option value="20">Balloon</option>
+        <option value="21">SpacePen</option>
+        <option value="22">Mouche</option>
     </select>
+    <button onclick="next();">Next</button>
 
     <canvas id="canvas"/>
 </body>
@@ -134,6 +137,10 @@ $(document).ready(function(){
         context.canvas.height = max_bot;
 });
 
+function next(){
+    $("#select").next().select();
+}
+
 function move(){
         //Si on ne change pas la vitesse de la balle
         if(!change){
@@ -150,13 +157,13 @@ function move(){
                         context.lineTo(p_left+v_right*(-4)+25,p_top+v_down*(-4)+25);
                         context.stroke();
                     }
-                    if (mode == 19){
-                        
-
+                    if (mode == 19 || mode == 21){
                         context.lineTo(p_left+v_right+25,p_top+v_down+25);
                         context.stroke();
                     }
                     
+                }else{
+                    context.clearRect(0,0,max_right,max_bot);
                 }
                 //---------------------------------
 
@@ -355,8 +362,8 @@ $('#select').on('change', function() {
             break;
         case '19': //Pen
             $("body").css("background-image","none");
-            $("#balle").css("background-image","none")
-                .css("background-color","rgba(0,0,0,1)");
+            $("#balle").css("background-image","url('balle_19.png')")
+                .css("background-color","rgba(0,0,0,0)");
                 rebond_ratio = 2/3;
                 apesenteur = 7/4;
                 canDraw = true;
@@ -368,6 +375,22 @@ $('#select').on('change', function() {
                 rebond_ratio = 2/3;
                 apesenteur = -0.75 ;
                 canDraw = true;
+            break;
+        case '21': //SpacePen
+            $("body").css("background-image","none");
+            $("#balle").css("background-image","url('balle_19.png')")
+                .css("background-color","rgba(0,0,0,0)");
+                rebond_ratio = 1/3;
+                apesenteur = 0;
+                canDraw = true;
+            break;
+        case '22': //Mouche
+            $("body").css("background-image","url('bg_22.png')");
+            $("#balle").css("background-image","url('balle_22.gif')")
+                .css("background-color","rgba(0,0,0,0)");
+                rebond_ratio = 1;
+                apesenteur = 0;
+                canDraw = false;
             break;
     }
     
